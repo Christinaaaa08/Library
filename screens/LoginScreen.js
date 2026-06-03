@@ -1,40 +1,65 @@
 import React, { useState } from "react";
-import { View, Alert } from "react-native";
-import { TextInput, Button } from "react-native-paper";
+import { View, Alert, StyleSheet } from "react-native";
+import { TextInput, Button, Card, Text } from "react-native-paper";
 import { useApp } from "../context/AppContext";
-
-const users = [
-  { username: "admin", password: "1234", name: "Admin" },
-  { username: "user", password: "1111", name: "User" },
-];
 
 export default function LoginScreen() {
   const { login } = useApp();
 
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = () => {
-    const found = users.find(
-      (u) => u.username === username && u.password === password
-    );
-
-    if (!found) {
-      Alert.alert("Error", "Wrong login");
+    if (!email.includes("@")) {
+      Alert.alert("Помилка", "Невірний email");
       return;
     }
 
-    login(found);
+    if (password.length < 4) {
+      Alert.alert("Помилка", "Пароль мінімум 4 символи");
+      return;
+    }
+
+    login(email, password);
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", padding: 20 }}>
-      <TextInput label="Username" onChangeText={setUsername} />
-      <TextInput label="Password" secureTextEntry onChangeText={setPassword} />
+    <View style={styles.container}>
+      <Card style={styles.card}>
+        <Card.Content>
 
-      <Button mode="contained" onPress={handleLogin} style={{ marginTop: 20 }}>
-        Login
-      </Button>
+          <Text variant="headlineMedium">📚 Library Login</Text>
+
+          <TextInput
+            label="Email"
+            value={email}
+            onChangeText={setEmail}
+            style={{ marginTop: 20 }}
+          />
+
+          <TextInput
+            label="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            style={{ marginTop: 10 }}
+          />
+
+          <Button
+            mode="contained"
+            onPress={handleLogin}
+            style={{ marginTop: 20 }}
+          >
+            Login
+          </Button>
+
+        </Card.Content>
+      </Card>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex:1, justifyContent:"center", padding:20 },
+  card: { padding:10 }
+});
